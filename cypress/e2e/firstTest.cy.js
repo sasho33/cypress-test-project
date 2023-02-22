@@ -42,3 +42,33 @@ describe("Our first suite", () => {
       .should("contain", "Email");
   });
 });
+
+it.only("invoke command", () => {
+  cy.visit("/");
+  cy.contains("Forms").click();
+  cy.contains("Form Layouts").click();
+
+  //1
+  cy.get('[for="exampleInputEmail1"]').should("contain", "Email address");
+
+  //2 Jquery SYntax with invoke
+
+  cy.get('[for="exampleInputEmail1"]')
+    .invoke("text")
+    .then((text) => {
+      expect(text).to.equal("Email address");
+    });
+
+  //3. without Invoke
+  cy.get('[for="exampleInputEmail1"]').then((label) => {
+    expect(label.text()).to.equal("Email address");
+  });
+
+  // checkbox
+  cy.contains("nb-card", "Basic form")
+    .find("nb-checkbox")
+    .click()
+    .find(".custom-checkbox")
+    .invoke("attr", "class")
+    .should("contain", "checked");
+});
