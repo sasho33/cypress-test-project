@@ -32,7 +32,7 @@ describe("Our first suite", () => {
     cy.contains("nb-card", "Horizontal form").find('[type="email"]');
   });
 
-  it.only("then and wrap methods", () => {
+  it("then and wrap methods", () => {
     cy.visit("/");
     cy.contains("Forms").click();
     cy.contains("Form Layouts").click();
@@ -41,34 +41,63 @@ describe("Our first suite", () => {
       .find('[for="inputEmail1"]')
       .should("contain", "Email");
   });
-});
 
-it.only("invoke command", () => {
-  cy.visit("/");
-  cy.contains("Forms").click();
-  cy.contains("Form Layouts").click();
+  it("invoke command", () => {
+    cy.visit("/");
+    cy.contains("Forms").click();
+    cy.contains("Form Layouts").click();
 
-  //1
-  cy.get('[for="exampleInputEmail1"]').should("contain", "Email address");
+    //1
+    cy.get('[for="exampleInputEmail1"]').should("contain", "Email address");
 
-  //2 Jquery SYntax with invoke
+    //2 Jquery SYntax with invoke
 
-  cy.get('[for="exampleInputEmail1"]')
-    .invoke("text")
-    .then((text) => {
-      expect(text).to.equal("Email address");
+    cy.get('[for="exampleInputEmail1"]')
+      .invoke("text")
+      .then((text) => {
+        expect(text).to.equal("Email address");
+      });
+
+    //3. without Invoke
+    cy.get('[for="exampleInputEmail1"]').then((label) => {
+      expect(label.text()).to.equal("Email address");
     });
 
-  //3. without Invoke
-  cy.get('[for="exampleInputEmail1"]').then((label) => {
-    expect(label.text()).to.equal("Email address");
+    // checkbox
+    cy.contains("nb-card", "Basic form")
+      .find("nb-checkbox")
+      .click()
+      .find(".custom-checkbox")
+      .invoke("attr", "class")
+      .should("contain", "checked");
   });
 
-  // checkbox
-  cy.contains("nb-card", "Basic form")
-    .find("nb-checkbox")
-    .click()
-    .find(".custom-checkbox")
-    .invoke("attr", "class")
-    .should("contain", "checked");
+  it("radio button", () => {
+    cy.visit("/");
+    cy.contains("Forms").click();
+    cy.contains("Form Layouts").click();
+
+    cy.contains("nb-card", "Using the Grid")
+      .find('[type="radio"]')
+      .then((radioButtons) => {
+        cy.wrap(radioButtons)
+          .first()
+          .check({ force: true })
+          .should("be.checked");
+
+        cy.wrap(radioButtons).eq(1).check({ force: true });
+
+        cy.wrap(radioButtons).first().should("not.be.checked");
+
+        cy.wrap(radioButtons).eq(2).should("be.disabled");
+      });
+  });
+
+  it.only("check boxes", () => {
+    cy.visit("/");
+    cy.contains("Modal & Overlays").click();
+    cy.contains("Toastr").click();
+
+    cy.get('[type="checkbox"]').check({ force: true });
+  });
 });
